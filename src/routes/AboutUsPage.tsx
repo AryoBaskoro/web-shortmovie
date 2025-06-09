@@ -2,8 +2,7 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import { Home, Users, Camera, Film, User, MapPin, Briefcase, Calendar } from "lucide-react"
-import { Link } from "react-router-dom"
+import {  Camera, Film, User, MapPin, Briefcase, Calendar } from "lucide-react"
 import Navbar from "@/components/ui/navbar"
 
 // Static Noise Component (same as main page)

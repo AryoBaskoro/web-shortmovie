@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Play, Home, Users } from "lucide-react"
+import { Home, Users } from "lucide-react"
 import { Link } from "react-router-dom"
 
 export default function Navbar() {
