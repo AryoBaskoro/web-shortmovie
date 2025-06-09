@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Play} from "lucide-react"
-import Navbar from "../components/ui/navbar"
+import Navbar from "@/components/ui/Navbar"
 
 function StaticNoise() {
   const [noise, setNoise] = useState<Array<{ id: number; x: number; y: number; opacity: number }>>([])
