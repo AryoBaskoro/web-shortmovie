@@ -290,15 +290,17 @@ function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
             
             <div className="flex items-center gap-6 mt-6 text-sm text-gray-400">
               <div className="flex items-center gap-2">
+                <Award size={16} />
+                <span>Drama</span>
+              </div>
+              <div className="flex items-center gap-2">
                 <Clock size={16} />
                 <span>07.18</span>
               </div>
               <div className="flex items-center gap-2">
-                <Award size={16} />
-                <span>Drama</span>
+                <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                <span>2025</span>
               </div>
-              <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-              <span>2025</span>
             </div>
           </motion.div>
         </div>
