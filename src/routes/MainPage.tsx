@@ -5,6 +5,21 @@ import { Play, Film, Award, Clock, X } from "lucide-react"
 import { Dialog, DialogContent, DialogOverlay, DialogPortal, DialogClose, } from "@/components/ui/dialog"
 import Navbar from "@/utils/NavBar"
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+import { initializeApp } from 'firebase/app';
+import { getAnalytics } from "firebase/analytics";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDKGJT-Hhh0mp6OuW6VPmacwlpSCaIaBlI",
+  authDomain: "testing-57b66.firebaseapp.com",
+  projectId: "testing-57b66",
+  storageBucket: "testing-57b66.appspot.com",
+  messagingSenderId: "817655352636",
+  appId: "1:817655352636:web:abb6b46c861e2b9ade6239",
+  measurementId: "G-QFSECSN49F"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 const storage = getStorage();
 const videoRef = ref(storage, 'short-movie.mp4');
@@ -187,7 +202,7 @@ function MovieDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             <div className="w-full h-full flex items-center justify-center bg-black">
               <video controls autoPlay className="max-w-full max-h-full object-contain" poster="/api/placeholder/800/450">
                 <source 
-                src={videoURL} 
+                src= {videoURL}
                 type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
@@ -206,12 +221,12 @@ function MovieDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
   )
 }
 
-
-
 function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
-  const [isHovered, setIsHovered] = useState(false)
-  const [videoThumbnail, setVideoThumbnail] = useState<string>('')
-  const [videoURL, setVideoURL] = useState<string>('')
+  const [isHovered, setIsHovered] = useState(false);
+  const [videoThumbnail, setVideoThumbnail] = useState<string>('');
+  const [videoURL, setVideoURL] = useState<string>('');
+
+  // Fetch the video URL from Firebase Storage
   useEffect(() => {
     const fetchVideoURL = async () => {
       try {
@@ -223,29 +238,31 @@ function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
     };
 
     fetchVideoURL();
-  }, []); 
+  }, []);
 
+  // Generate thumbnail after the video URL is fetched
   useEffect(() => {
     if (videoURL) {
       const generateThumbnail = () => {
         const video = document.createElement('video');
         video.crossOrigin = 'anonymous';
         video.src = videoURL;
-        video.currentTime = 5; // Seek to the 5-second mark
-
+        
+        // Wait for video metadata to load, then set currentTime to 5 seconds
         video.onloadedmetadata = () => {
+          video.currentTime = 5;
+        };
+
+        // Once the video seeks to the 5-second mark, generate the thumbnail
+        video.onseeked = () => {
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
-
           if (ctx) {
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-
-            video.onseeked = () => {
-              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-              const thumbnail = canvas.toDataURL('image/jpeg', 0.8);
-              setVideoThumbnail(thumbnail); // Set the thumbnail image URL
-            };
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const thumbnail = canvas.toDataURL('image/jpeg', 0.8);
+            setVideoThumbnail(thumbnail); // Set the thumbnail image URL
           }
         };
 
@@ -254,10 +271,9 @@ function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
         };
       };
 
-      generateThumbnail(); // Generate thumbnail after URL is set
+      generateThumbnail();
     }
-  }, [videoURL]); // Re-run when videoURL changes
-
+  }, [videoURL]);
 
   return (
     <motion.div
@@ -272,7 +288,7 @@ function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
         
         {/* Video Thumbnail */}
         {videoThumbnail ? (
-          <div 
+          <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage: `url(${videoThumbnail})`,
@@ -406,7 +422,7 @@ function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
       <div className="absolute -inset-3 border border-gray-700/8 rounded-3xl pointer-events-none" />
       <div className="absolute -inset-5 border border-gray-800/5 rounded-3xl pointer-events-none" />
     </motion.div>
-  )
+  );
 }
 
 function MovieSynopsis() {
