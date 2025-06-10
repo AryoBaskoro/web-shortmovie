@@ -170,10 +170,14 @@ function MovieDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
                 className="max-w-full max-h-full object-contain"
                 poster="/api/placeholder/800/450"
               >
-                <source src={movieVideo} type="video/mp4" />
+                <source
+                  src="https://drive.google.com/uc?export=download&id=1B8KbWuHsY47uQLT-nXFKiaJKUHZvUIgt"
+                  type="video/mp4"
+                />
                 Your browser does not support the video tag.
               </video>
             </div>
+
             
             {/* Optional: Video info overlay */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
