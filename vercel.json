@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "./src/routes/NotFound.tsx"
+      "destination": "./index.html"
     }
   ]
 }
