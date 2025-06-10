@@ -2,15 +2,21 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Play, Film, Award, Clock, X } from "lucide-react"
-import {
-  Dialog,
-  DialogContent,
-  DialogOverlay,
-  DialogPortal,
-  DialogClose,
-} from "@/components/ui/dialog"
-import movieVideo from "../assets/short-movie.mp4"
+import { Dialog, DialogContent, DialogOverlay, DialogPortal, DialogClose, } from "@/components/ui/dialog"
 import Navbar from "@/utils/NavBar"
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+
+const storage = getStorage();
+const videoRef = ref(storage, 'short-movie.mp4');
+
+getDownloadURL(videoRef)
+  .then((url) => {
+    console.log('Video URL:', url);
+  })
+  .catch((error) => {
+    console.error('Error getting download URL:', error);
+  });
+
 
 function StaticNoise() {
   const [noise, setNoise] = useState<Array<{ id: number; x: number; y: number; opacity: number }>>([])
@@ -148,6 +154,21 @@ function FloatingElements() {
 }
 
 function MovieDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+
+  const [videoURL, setVideoURL] = useState<string>('')
+  useEffect(() => {
+    const fetchVideoURL = async () => {
+      try {
+        const url = await getDownloadURL(ref(storage, 'short-movie.mp4'))
+        setVideoURL(url)
+      } catch (error) {
+        console.error('Error fetching video URL:', error)
+      }
+    }
+
+    fetchVideoURL()
+  }, [])
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogPortal>
@@ -164,16 +185,10 @@ function MovieDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             
             {/* Video container */}
             <div className="w-full h-full flex items-center justify-center bg-black">
-              <video
-                controls
-                autoPlay
-                className="max-w-full max-h-full object-contain"
-                poster="/api/placeholder/800/450"
-              >
-                <source
-                  src="https://drive.google.com/uc?export=download&id=1B8KbWuHsY47uQLT-nXFKiaJKUHZvUIgt"
-                  type="video/mp4"
-                />
+              <video controls autoPlay className="max-w-full max-h-full object-contain" poster="/api/placeholder/800/450">
+                <source 
+                src={videoURL} 
+                type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
@@ -191,42 +206,58 @@ function MovieDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
   )
 }
 
+
+
 function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
   const [isHovered, setIsHovered] = useState(false)
   const [videoThumbnail, setVideoThumbnail] = useState<string>('')
+  const [videoURL, setVideoURL] = useState<string>('')
+  useEffect(() => {
+    const fetchVideoURL = async () => {
+      try {
+        const url = await getDownloadURL(ref(storage, 'short-movie.mp4'));
+        setVideoURL(url); // Set the video URL
+      } catch (error) {
+        console.error('Error fetching video URL:', error);
+      }
+    };
+
+    fetchVideoURL();
+  }, []); 
 
   useEffect(() => {
-    const generateThumbnail = () => {
-      const video = document.createElement('video')
-      video.crossOrigin = 'anonymous'
-      video.src = movieVideo
-      video.currentTime = 5 
-      
-      video.onloadedmetadata = () => {
-        const canvas = document.createElement('canvas')
-        const ctx = canvas.getContext('2d')
-        
-        canvas.width = video.videoWidth
-        canvas.height = video.videoHeight
-        
-        video.onseeked = () => {
-          if (ctx) {
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-            const thumbnail = canvas.toDataURL('image/jpeg', 0.8)
-            setVideoThumbnail(thumbnail)
-          }
-        }
-        
-        video.currentTime = 5 
-      }
-      
-      video.onerror = () => {
-        console.warn('Could not load video for thumbnail generation')
-      }
-    }
+    if (videoURL) {
+      const generateThumbnail = () => {
+        const video = document.createElement('video');
+        video.crossOrigin = 'anonymous';
+        video.src = videoURL;
+        video.currentTime = 5; // Seek to the 5-second mark
 
-    generateThumbnail()
-  }, [])
+        video.onloadedmetadata = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          if (ctx) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            video.onseeked = () => {
+              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+              const thumbnail = canvas.toDataURL('image/jpeg', 0.8);
+              setVideoThumbnail(thumbnail); // Set the thumbnail image URL
+            };
+          }
+        };
+
+        video.onerror = () => {
+          console.warn('Could not load video for thumbnail generation');
+        };
+      };
+
+      generateThumbnail(); // Generate thumbnail after URL is set
+    }
+  }, [videoURL]); // Re-run when videoURL changes
+
 
   return (
     <motion.div
