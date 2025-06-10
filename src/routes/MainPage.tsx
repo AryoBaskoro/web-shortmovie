@@ -1,25 +1,25 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Play} from "lucide-react"
-import Navbar from "@/components/ui/Navbar"
+import { Play, Film, Award, Clock } from "lucide-react"
+import Navbar from "@/utils/NavBar"
 
 function StaticNoise() {
   const [noise, setNoise] = useState<Array<{ id: number; x: number; y: number; opacity: number }>>([])
 
   useEffect(() => {
     const generateNoise = () => {
-      const newNoise = Array.from({ length: 80 }, (_, i) => ({
+      const newNoise = Array.from({ length: 120 }, (_, i) => ({
         id: i,
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
-        opacity: Math.random() * 0.15,
+        opacity: Math.random() * 0.2,
       }))
       setNoise(newNoise)
     }
 
     generateNoise()
-    const interval = setInterval(generateNoise, 200)
+    const interval = setInterval(generateNoise, 150)
     return () => clearInterval(interval)
   }, [])
 
@@ -32,7 +32,7 @@ function StaticNoise() {
           style={{
             left: dot.x,
             top: dot.y,
-            opacity: dot.opacity*1.5,
+            opacity: dot.opacity,
           }}
         />
       ))}
@@ -40,68 +40,241 @@ function StaticNoise() {
   )
 }
 
+function GlitchText({ children, className = "", delay = 0 }: { children: string; className?: string; delay?: number }) {
+  const [isGlitching, setIsGlitching] = useState(false)
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const interval = setInterval(() => {
+        setIsGlitching(true)
+        setTimeout(() => setIsGlitching(false), 200)
+      }, 4000 + Math.random() * 3000)
+
+      return () => clearInterval(interval)
+    }, delay)
+
+    return () => clearTimeout(timeout)
+  }, [delay])
+
+  return (
+    <div className={`relative ${className}`}>
+      <div
+        className={`transition-all duration-200 ${
+          isGlitching
+            ? 'transform translate-x-0.5 text-red-400/80 opacity-90'
+            : ''
+        }`}
+      >
+        {children}
+      </div>
+      {isGlitching && (
+        <>
+          <div className="absolute inset-0 text-cyan-400/70 transform -translate-x-0.5 opacity-60">
+            {children}
+          </div>
+          <div className="absolute inset-0 text-yellow-400/60 transform translate-x-0.25 translate-y-0.25 opacity-50">
+            {children}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+function FilmStrip() {
+  return (
+    <div className="absolute inset-0 opacity-3 pointer-events-none overflow-hidden">
+      <div className="absolute left-4 top-0 bottom-0 w-6 bg-white/5"></div>
+      <div className="absolute right-4 top-0 bottom-0 w-6 bg-white/5"></div>
+      {Array.from({ length: 30 }).map((_, i) => (
+        <div key={`left-${i}`} className="absolute left-6 w-2 h-6 bg-black/20" style={{ top: `${i * 3.33}%` }} />
+      ))}
+      {Array.from({ length: 30 }).map((_, i) => (
+        <div key={`right-${i}`} className="absolute right-6 w-2 h-6 bg-black/20" style={{ top: `${i * 3.33}%` }} />
+      ))}
+    </div>
+  )
+}
+
+function FloatingElements() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <motion.div
+        animate={{
+          y: [-20, 20, -20],
+          rotate: [0, 180, 360],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "linear"
+        }}
+        className="absolute top-1/4 left-1/6 w-16 h-16 border border-gray-600/10 rounded-full"
+      />
+      <motion.div
+        animate={{
+          y: [20, -20, 20],
+          rotate: [360, 180, 0],
+        }}
+        transition={{
+          duration: 25,
+          repeat: Infinity,
+          ease: "linear"
+        }}
+        className="absolute bottom-1/3 right-1/5 w-12 h-12 border border-gray-600/10 rotate-45"
+      />
+      <motion.div
+        animate={{
+          x: [-10, 10, -10],
+          opacity: [0.1, 0.3, 0.1],
+        }}
+        transition={{
+          duration: 15,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        className="absolute top-1/2 right-1/4 w-1 h-24 bg-gray-600/10 rotate-12"
+      />
+    </div>
+  )
+}
+
 function MovieThumbnail() {
   const [isHovered, setIsHovered] = useState(false)
-  const [isPlaying, setIsPlaying] = useState(false)
+  const [playState, setPlayState] = useState('paused')
+
+  const handlePlay = () => {
+    setPlayState(playState === 'playing' ? 'paused' : 'playing')
+  }
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: 0.8, duration: 1 }}
-      className="relative w-full mb-12"
+      initial={{ opacity: 0, scale: 0.9, y: 50 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ delay: 0.6, duration: 1.2, type: "spring", stiffness: 60 }}
+      className="relative w-full mb-20 group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative aspect-video bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl overflow-hidden shadow-2xl border border-gray-700/50">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
+      <div className="relative aspect-video bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-3xl overflow-hidden shadow-2xl border border-gray-700/30">
         
-        <div className="absolute inset-0 opacity-20 bg-gradient-to-br from-transparent via-gray-500/10 to-transparent" />
+        <motion.div
+          animate={{
+            y: ['-100%', '100vh'],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "linear",
+            repeatDelay: 2,
+          }}
+          className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent z-10"
+        />
         
-        <div className="absolute bottom-6 left-6 right-6">
-          <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2 tracking-tight">
-            Lebih Dari Sekedar Umur
-          </h3>
-          <p className="text-gray-300 text-sm font-light">
-            A cinematic journey through time and space
-          </p>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/60" />
+        <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)]" />
+        
+        <div className="absolute bottom-8 left-8 right-8 z-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2, duration: 0.8 }}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <Film size={24} className="text-gray-400" />
+              <span className="text-gray-400 text-sm uppercase tracking-wider font-medium">
+                Short Movie
+              </span>
+            </div>
+            
+            <GlitchText className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-3 tracking-tight">
+              Lebih Dari Sekedar Umur
+            </GlitchText>
+            
+            <p className="text-gray-300 text-base sm:text-lg font-light leading-relaxed max-w-2xl">
+              The moment when childhood ends and reality begins
+            </p>
+            
+            <div className="flex items-center gap-6 mt-6 text-sm text-gray-400">
+              <div className="flex items-center gap-2">
+                <Clock size={16} />
+                <span>Coming Soon</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Award size={16} />
+                <span>Drama</span>
+              </div>
+              <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+              <span>2024</span>
+            </div>
+          </motion.div>
         </div>
 
         <motion.div
-          initial={{ scale: 1, opacity: 0.8 }}
-          animate={{
-            scale: isHovered ? 1.1 : 1,
-            opacity: isHovered ? 1 : 0.8,
-          }}
-          transition={{ duration: 0.3 }}
-          className="absolute inset-0 flex items-center justify-center"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 1.4, duration: 0.6 }}
+          className="absolute inset-0 flex items-center justify-center z-30"
         >
-          <Button
-            onClick={() => setIsPlaying(!isPlaying)}
-            className="group relative bg-white/20 hover:bg-white/30 border-2 border-white/50 hover:border-white/70
-                       rounded-full w-20 h-20 sm:w-24 sm:h-24 transition-all duration-300
-                       backdrop-blur-md shadow-2xl hover:shadow-3xl
-                       hover:scale-105 active:scale-95"
+          <motion.div
+            animate={{
+              scale: isHovered ? 1.1 : 1,
+              rotateY: isHovered ? 5 : 0,
+            }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
           >
-            <Play 
-              size={isHovered ? 32 : 28} 
-              className="text-white fill-white ml-1 transition-all duration-300" 
-            />
-            
-            <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-pulse" />
-            <div className="absolute inset-0 rounded-full border border-white/20 scale-125 animate-ping" />
-          </Button>
+            <Button
+              onClick={handlePlay}
+              className="group relative bg-white/15 hover:bg-white/25 border-2 border-white/40 hover:border-white/60
+                         rounded-full w-24 h-24 sm:w-28 sm:h-28 transition-all duration-500
+                         backdrop-blur-xl shadow-2xl hover:shadow-3xl
+                         hover:scale-110 active:scale-100 transform-gpu"
+            >
+              <Play 
+                size={isHovered ? 36 : 32} 
+                className="text-white fill-white ml-1 transition-all duration-300 group-hover:drop-shadow-lg" 
+              />
+              
+              <div className="absolute inset-0 rounded-full border-2 border-white/20 animate-pulse" />
+              <motion.div
+                animate={{
+                  scale: [1, 1.4, 1],
+                  opacity: [0.5, 0, 0.5],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeOut"
+                }}
+                className="absolute inset-0 rounded-full border border-white/30"
+              />
+              <motion.div
+                animate={{
+                  scale: [1, 1.6, 1],
+                  opacity: [0.3, 0, 0.3],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeOut",
+                  delay: 0.5
+                }}
+                className="absolute inset-0 rounded-full border border-white/20"
+              />
+            </Button>
+          </motion.div>
         </motion.div>
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: isHovered ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-          className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30"
+          transition={{ duration: 0.4 }}
+          className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/40 z-10"
         />
       </div>
-
-      <div className="absolute -inset-2 border border-gray-600/20 rounded-2xl pointer-events-none" />
-      <div className="absolute -inset-4 border border-gray-700/10 rounded-3xl pointer-events-none" />
+      <div className="absolute -inset-1 border border-gray-600/15 rounded-3xl pointer-events-none" />
+      <div className="absolute -inset-3 border border-gray-700/8 rounded-3xl pointer-events-none" />
+      <div className="absolute -inset-5 border border-gray-800/5 rounded-3xl pointer-events-none" />
     </motion.div>
   )
 }
@@ -109,21 +282,47 @@ function MovieThumbnail() {
 function MovieSynopsis() {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 1.2, duration: 0.8 }}
-      className="max-w-3xl mx-auto mb-16 text-center"
+      transition={{ delay: 1.8, duration: 1 }}
+      className="max-w-4xl mx-auto mb-20 text-center relative"
     >
-      <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6 tracking-tight">
-        Synopsis
-      </h2>
+      <div className="mb-12">
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ delay: 2, duration: 1 }}
+          className="w-32 h-0.5 bg-gradient-to-r from-transparent via-gray-400 to-transparent mx-auto mb-8"
+        />
+        
+        <GlitchText 
+          className="text-4xl sm:text-5xl font-bold text-white mb-6 tracking-tight"
+          delay={2200}
+        >
+          Synopsis
+        </GlitchText>
+      </div>
       
-      <div className="w-24 h-0.5 bg-gradient-to-r from-transparent via-gray-400 to-transparent mx-auto mb-8" />
-      
-      <p className="text-lg text-gray-300 leading-relaxed font-light mb-6">
-        Empat sahabat — Dheovan, Raphael, Aryo dan Evaldo — merasa mereka sudah dewasa. Mereka sudah memasuki tahun terakhir kuliah, mulai bicara tentang karier, kebebasan finansial, dan bagaimana mereka bukan "anak-anak" lagi. Namun, dalam satu hari, mereka menghadapi tiga kejadian yang membuat mereka sadar bahwa menjadi dewasa bukan hanya soal usia, tapi tentang pilihan yang sulit.
-
-      </p>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2.4, duration: 1 }}
+        className="relative bg-gradient-to-br from-gray-900/30 to-black/30 backdrop-blur-sm 
+                   border border-gray-700/20 rounded-2xl p-8 sm:p-12 shadow-xl"
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-2xl" />
+        
+        <p className="text-lg sm:text-xl text-gray-300 leading-relaxed font-light relative z-10">
+          Empat sahabat — <span className="text-white font-medium">Dheovan</span>, <span className="text-white font-medium">Raphael</span>, <span className="text-white font-medium">Aryo</span> dan <span className="text-white font-medium">Evaldo</span> — merasa mereka sudah dewasa. Mereka sudah memasuki tahun terakhir kuliah, mulai bicara tentang karier, kebebasan finansial, dan bagaimana mereka bukan "anak-anak" lagi.
+          <br /><br />
+          Namun, dalam satu hari, mereka menghadapi kejadian yang membuat mereka sadar bahwa <span className="text-white font-medium italic">menjadi dewasa bukan hanya soal usia, tapi tentang pilihan yang sulit</span>.
+        </p>
+        
+        <div className="absolute top-4 left-4 w-6 h-6 border-l-2 border-t-2 border-gray-600/30" />
+        <div className="absolute top-4 right-4 w-6 h-6 border-r-2 border-t-2 border-gray-600/30" />
+        <div className="absolute bottom-4 left-4 w-6 h-6 border-l-2 border-b-2 border-gray-600/30" />
+        <div className="absolute bottom-4 right-4 w-6 h-6 border-r-2 border-b-2 border-gray-600/30" />
+      </motion.div>
     </motion.div>
   )
 }
@@ -131,38 +330,75 @@ function MovieSynopsis() {
 function QuoteSection() {
   return (    
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 1.6, duration: 0.8 }}
-      className="max-w-4xl mx-auto text-center"
+      transition={{ delay: 2.8, duration: 1 }}
+      className="max-w-5xl mx-auto text-center relative"
     >
-      <blockquote className="relative bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-md 
-                             border border-gray-700/30 rounded-2xl p-8 sm:p-12 shadow-2xl">
-        <div className="absolute -top-4 -left-4 text-6xl text-gray-600/30 font-serif">"</div>
-        <div className="absolute -bottom-8 -right-4 text-6xl text-gray-600/30 font-serif rotate-180">"</div>
+      <motion.blockquote 
+        whileHover={{ scale: 1.02, rotateX: 2 }}
+        transition={{ duration: 0.4 }}
+        className="relative bg-gradient-to-br from-gray-900/50 to-black/60 backdrop-blur-md 
+                   border border-gray-700/30 rounded-3xl p-10 sm:p-16 shadow-2xl
+                   transform-gpu hover:shadow-3xl transition-shadow duration-500"
+      >
+        {/* Quote marks */}
+        <div className="absolute -top-6 -left-6 text-8xl text-gray-600/20 font-serif leading-none">"</div>
+        <div className="absolute -bottom-10 -right-6 text-8xl text-gray-600/20 font-serif rotate-180 leading-none">"</div>
         
-        <p className="text-xl sm:text-2xl text-gray-200 font-light italic leading-relaxed mb-6">
-          "Jadi dewasa itu bukan tentang tahu segalanya, tapi tentang tetap jalan—meskipun dunia nggak kasih jawaban yang pasti." 
-        </p>
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-8 left-8 w-16 h-16 border border-gray-400 rounded-full" />
+          <div className="absolute bottom-8 right-8 w-12 h-12 border border-gray-400 rotate-45" />
+        </div>
         
-        <footer className="text-gray-400 font-medium tracking-wide">
-          <div className="w-16 h-0.5 bg-gray-500/50 mx-auto mb-4" />
-          <cite className="not-italic">Us</cite>
-        </footer>
-      </blockquote>
+        <div className="relative z-10">
+          <GlitchText 
+            className="text-2xl sm:text-3xl md:text-4xl text-gray-100 font-light italic leading-relaxed mb-8"
+            delay={3200}
+          >
+            Jadi dewasa itu bukan tentang tahu segalanya, tapi tentang tetap jalan—meskipun dunia nggak kasih jawaban yang pasti.
+          </GlitchText>
+          
+          <motion.footer 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 3.6, duration: 0.8 }}
+            className="text-gray-400 font-medium tracking-wider"
+          >
+            <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-gray-500 to-transparent mx-auto mb-4" />
+            <cite className="not-italic text-lg">— Us</cite>
+          </motion.footer>
+        </div>
+        
+        {/* Glow effect */}
+        <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500" />
+      </motion.blockquote>
+
+      {/* Final decorative elements */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.1 }}
+        transition={{ delay: 4, duration: 2 }}
+        className="absolute inset-0 pointer-events-none"
+      >
+        <div className="absolute top-1/4 left-1/6 w-2 h-20 bg-gray-600/10 rotate-12" />
+        <div className="absolute bottom-1/4 right-1/5 w-2 h-16 bg-gray-600/10 -rotate-12" />
+      </motion.div>
     </motion.div>
   )
 }
 
 export default function MainPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white overflow-x-hidden">
       <StaticNoise />
       <Navbar />
+      <FilmStrip />
+      <FloatingElements />
       
-      <main className="relative z-10 pt-24 pb-16 px-4 sm:px-6">
+      <main className="relative z-10 py-24 px-4 sm:px-6">
         <div className="container mx-auto">
-          <div className="mb-16" />
           <MovieThumbnail />
           <MovieSynopsis />
           <QuoteSection />

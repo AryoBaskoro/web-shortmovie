@@ -3,9 +3,8 @@ import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import {  Camera, Film, User, MapPin, Briefcase, Calendar } from "lucide-react"
-import Navbar from "@/components/ui/Navbar"
+import Navbar from "@/utils/NavBar"
 
-// Static Noise Component (same as main page)
 function StaticNoise() {
   const [noise, setNoise] = useState<Array<{ id: number; x: number; y: number; opacity: number }>>([])
 
@@ -123,13 +122,12 @@ function TeamMemberCard({ member, index }: { member: any; index: number }) {
   )
 }
 
-// Team Carousel Component
 function TeamCarousel() {
   const teamMembers = [
     {
       name: "Dheovan Winata Alvian",
       age: 22,
-      role: "Director",
+      role: "Actor",
       location: "Jakarta, Indonesia",
       specialty: "Visual Storytelling",
       quote: "Every frame tells a story, every story changes lives."
@@ -137,7 +135,7 @@ function TeamCarousel() {
     {
       name: "Raphael Brian Pratama",
       age: 21,
-      role: "Cinematographer",
+      role: "Actor",
       location: "Bandung, Indonesia",
       specialty: "Visual Composition",
       quote: "Light is the language of cinema, shadows are its poetry."
@@ -145,8 +143,8 @@ function TeamCarousel() {
     {
       name: "Muhammad Aryo Baskoro",
       age: 20,
-      role: "Producer",
-      location: "Surabaya, Indonesia",
+      role: "Actor, Web Developer & Designer",
+      location: "Jakarta, Indonesia",
       specialty: "Project Management",
       quote: "Great films are born from great collaboration and vision."
     },
@@ -161,7 +159,7 @@ function TeamCarousel() {
     {
         name:"Matthew Nathanael Halim",
         age: 22,
-        role: "Editor",
+        role: "Author, Editor",
         location: "Jakarta, Indonesia",
         specialty: "Post-Production",
         quote: "Editing is where the story truly comes to life."
@@ -169,7 +167,7 @@ function TeamCarousel() {
     {
         name:"Winsen Olando",
         age: 21,
-        role: "Sound Designer",
+        role: "Author, Cinematographer, Editor",
         location: "Medan, Indonesia",
         specialty: "Audio Engineering",
         quote: "Sound is the heartbeat of cinema."
@@ -187,9 +185,9 @@ function TeamCarousel() {
         <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight">
           Meet Our Team
         </h2>
-        <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-gray-400 to-transparent mx-auto mb-6" />
-        <p className="text-gray-400 text-lg font-light max-w-2xl mx-auto">
-          Six passionate filmmakers united by a shared vision to create meaningful cinema
+        <div className="w-40 h-0.5 bg-gradient-to-r from-transparent via-gray-400 to-transparent mx-auto mb-6" />
+        <p className="text-gray-400 text-lg font-light max-w-3xl mx-auto">
+          <span className="text-white font-medium">Group 1</span> — Six passionate filmmakers united by a shared vision to create meaningful cinema
         </p>
       </div>
 
