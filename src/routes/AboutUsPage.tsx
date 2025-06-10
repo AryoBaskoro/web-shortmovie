@@ -8,8 +8,8 @@ import dheovanImg from "../assets/dheovan.jpg"
 import raphaelImg from "../assets/raphael.jpg"
 import aryoImg from "../assets/aryo.jpg"
 import evaldoImg from "../assets/evaldo.jpg"
-import matthewImg from "../assets/matthew.jpg"
 import winsenImg from "../assets/winsen.jpg"
+import matthewImg from "../assets/matthew.jpg"
 
 // Type definitions
 interface TeamMember {
