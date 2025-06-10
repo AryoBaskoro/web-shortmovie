@@ -232,7 +232,6 @@ function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
   const [videoThumbnail, setVideoThumbnail] = useState<string>('');
   const [videoURL, setVideoURL] = useState<string>('');
 
-  // Fetch the video URL from Firebase Storage
   useEffect(() => {
     const fetchVideoURL = async () => {
       try {
@@ -246,7 +245,6 @@ function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
     fetchVideoURL();
   }, []);
 
-  // Generate thumbnail after the video URL is fetched
   useEffect(() => {
     if (videoURL) {
       const generateThumbnail = () => {
