@@ -4,6 +4,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import {  Camera, Film, User, MapPin, Briefcase, Calendar } from "lucide-react"
 import Navbar from "@/utils/NavBar"
+import dheovanImg from "../assets/dheovan.jpg"
+import raphaelImg from "../assets/raphael.jpg"
+import aryoImg from "../assets/aryo.jpg"
+import evaldoImg from "../assets/evaldo.jpg"
+import matthewImg from "../assets/matthew.jpg"
+import winsenImg from "../assets/winsen.jpg"
 
 function StaticNoise() {
   const [noise, setNoise] = useState<Array<{ id: number; x: number; y: number; opacity: number }>>([])
@@ -41,8 +47,18 @@ function StaticNoise() {
   )
 }
 
-function TeamMemberCard({ member, index }: { member: any; index: number }) {
-  const [isHovered, setIsHovered] = useState(false)
+function TeamMemberCard({ member, index }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
 
   return (
     <motion.div
@@ -57,12 +73,37 @@ function TeamMemberCard({ member, index }: { member: any; index: number }) {
         <CardContent className="p-0">
           {/* Profile Image Section */}
           <div className="relative aspect-[4/5] overflow-hidden">
+            {/* Background gradient (fallback) */}
             <div className="absolute inset-0 bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <User size={80} className="text-gray-600" />
-            </div>
             
-            {/* Overlay */}
+            {/* Profile Image */}
+            {!imageError && (
+              <img
+                src={member.image}
+                alt={member.name}
+                onError={handleImageError}
+                onLoad={handleImageLoad}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                  imageLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+              />
+            )}
+            
+            {/* Fallback User Icon */}
+            {(imageError || !imageLoaded) && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <User size={80} className="text-gray-600" />
+              </div>
+            )}
+            
+            {/* Loading state */}
+            {!imageLoaded && !imageError && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
+            
+            {/* Hover Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: isHovered ? 1 : 0 }}
@@ -73,10 +114,8 @@ function TeamMemberCard({ member, index }: { member: any; index: number }) {
             {/* Role Badge */}
             <div className="absolute top-4 right-4">
               <div className="bg-black/60 backdrop-blur-sm rounded-full p-2 border border-gray-600/50">
-                {member.role === 'Director' && <Film size={16} className="text-white" />}
-                {member.role === 'Cinematographer' && <Camera size={16} className="text-white" />}
-                {member.role === 'Producer' && <Briefcase size={16} className="text-white" />}
-                {member.role === 'Actor' && <User size={16} className="text-white" />}
+                
+                 <User size={16} className="text-white" />
               </div>
             </div>
           </div>
@@ -119,28 +158,31 @@ function TeamMemberCard({ member, index }: { member: any; index: number }) {
         </CardContent>
       </Card>
     </motion.div>
-  )
+  );
 }
 
 function TeamCarousel() {
   const teamMembers = [
     {
+      image: dheovanImg,
       name: "Dheovan Winata Alvian",
-      age: 22,
+      age: 20,
       role: "2702283045",
       location: "Jakarta, Indonesia",
       specialty: "Actor",
       quote: "Every frame tells a story, every story changes lives."
     },
     {
+      image: raphaelImg,
       name: "Raphael Brian Pratama",
-      age: 21,
+      age: 20,
       role: "2702275024",
       location: "Bandung, Indonesia",
       specialty: "Actor",
       quote: "Light is the language of cinema, shadows are its poetry."
     },
     {
+      image: aryoImg,
       name: "Muhammad Aryo Baskoro",
       age: 20,
       role: "2702382221",
@@ -149,28 +191,31 @@ function TeamCarousel() {
       quote: "Great films are born from great collaboration and vision."
     },
     {
+      image: evaldoImg,
       name: "Evaldo Raynardi",
-      age: 22,
+      age: 20,
       role: "2702232750",
       location: "Yogyakarta, Indonesia",
       specialty: "Actor",
       quote: "Acting is not pretending, it's finding the truth in fiction."
     },
     {
-        name:"Matthew Nathanael Halim",
-        age: 22,
-        role: "2702217402",
-        location: "Jakarta, Indonesia",
-        specialty: "Script Author, Editor",
-        quote: "Editing is where the story truly comes to life."
+      image: matthewImg,
+      name:"Matthew Nathanael Halim",
+      age: 20,
+      role: "2702217402",
+      location: "Jakarta, Indonesia",
+      specialty: "Script Author, Editor",
+      quote: "Editing is where the story truly comes to life."
     },
     {
-        name:"Winsen Olando",
-        age: 21,
-        role: "2702280844",
-        location: "Medan, Indonesia",
-        specialty: "Script Author, Cinematographer, Editor",
-        quote: "Sound is the heartbeat of cinema."
+      image: winsenImg,
+      name:"Winsen Olando",
+      age: 20,
+      role: "2702280844",
+      location: "Medan, Indonesia",
+      specialty: "Script Author, Cinematographer, Editor",
+      quote: "Sound is the heartbeat of cinema."
     }
   ]
 
