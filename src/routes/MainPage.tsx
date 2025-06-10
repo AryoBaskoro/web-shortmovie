@@ -7,6 +7,11 @@ import Navbar from "@/utils/NavBar"
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from "firebase/analytics";
+import { logEvent } from 'firebase/analytics';
+
+// Example: logging a custom event
+
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyDKGJT-Hhh0mp6OuW6VPmacwlpSCaIaBlI",
@@ -20,6 +25,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+logEvent(analytics, 'page_view');
 
 const storage = getStorage();
 const videoRef = ref(storage, 'short-movie.mp4');
