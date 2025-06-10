@@ -127,49 +127,49 @@ function TeamCarousel() {
     {
       name: "Dheovan Winata Alvian",
       age: 22,
-      role: "Actor",
+      role: "2702283045",
       location: "Jakarta, Indonesia",
-      specialty: "Visual Storytelling",
+      specialty: "Actor",
       quote: "Every frame tells a story, every story changes lives."
     },
     {
       name: "Raphael Brian Pratama",
       age: 21,
-      role: "Actor",
+      role: "2702275024",
       location: "Bandung, Indonesia",
-      specialty: "Visual Composition",
+      specialty: "Actor",
       quote: "Light is the language of cinema, shadows are its poetry."
     },
     {
       name: "Muhammad Aryo Baskoro",
       age: 20,
-      role: "Actor, Web Developer & Designer",
+      role: "2702382221",
       location: "Jakarta, Indonesia",
-      specialty: "Project Management",
+      specialty: "Actor, Web Developer & Designer",
       quote: "Great films are born from great collaboration and vision."
     },
     {
       name: "Evaldo Raynardi",
       age: 22,
-      role: "Actor",
+      role: "2702232750",
       location: "Yogyakarta, Indonesia",
-      specialty: "Character Development",
+      specialty: "Actor",
       quote: "Acting is not pretending, it's finding the truth in fiction."
     },
     {
         name:"Matthew Nathanael Halim",
         age: 22,
-        role: "Author, Editor",
+        role: "2702217402",
         location: "Jakarta, Indonesia",
-        specialty: "Post-Production",
+        specialty: "Script Author, Editor",
         quote: "Editing is where the story truly comes to life."
     },
     {
         name:"Winsen Olando",
         age: 21,
-        role: "Author, Cinematographer, Editor",
+        role: "2702280844",
         location: "Medan, Indonesia",
-        specialty: "Audio Engineering",
+        specialty: "Script Author, Cinematographer, Editor",
         quote: "Sound is the heartbeat of cinema."
     }
   ]
@@ -346,6 +346,7 @@ export default function AboutUsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
       <StaticNoise />
+      <Navbar />
       
       <div className="fixed inset-0 opacity-2 pointer-events-none z-0">
         <div className="absolute left-4 top-0 bottom-0 w-4 bg-white/30"></div>
@@ -358,7 +359,6 @@ export default function AboutUsPage() {
         ))}
       </div>
 
-      <Navbar />
       
       <main className="relative z-10 pt-24 pb-16 px-4 sm:px-6">
         <div className="container mx-auto">

@@ -1,7 +1,15 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Play, Film, Award, Clock } from "lucide-react"
+import { Play, Film, Award, Clock, X } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogOverlay,
+  DialogPortal,
+  DialogClose,
+} from "@/components/ui/dialog"
+import movieVideo from "../assets/short-movie.mp4"
 import Navbar from "@/utils/NavBar"
 
 function StaticNoise() {
@@ -139,13 +147,82 @@ function FloatingElements() {
   )
 }
 
-function MovieThumbnail() {
-  const [isHovered, setIsHovered] = useState(false)
-  const [playState, setPlayState] = useState('paused')
+function MovieDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogPortal>
+        <DialogOverlay className="bg-black/80 backdrop-blur-sm" />
+        <DialogContent 
+          className="max-w-5xl w-[95vw] h-[85vh] bg-black border-gray-800 p-0 overflow-hidden"
+          showCloseButton={false}
+        >
+          <div className="relative w-full h-full">
+            {/* Custom close button */}
+            <DialogClose className="absolute top-4 right-4 z-50 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors">
+              <X size={20} />
+            </DialogClose>
+            
+            {/* Video container */}
+            <div className="w-full h-full flex items-center justify-center bg-black">
+              <video
+                controls
+                autoPlay
+                className="max-w-full max-h-full object-contain"
+                poster="/api/placeholder/800/450"
+              >
+                <source src={movieVideo} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            
+            {/* Optional: Video info overlay */}
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+              <h3 className="text-white text-xl font-bold mb-2">Lebih Dari Sekedar Umur</h3>
+              <p className="text-gray-300 text-sm">The moment when childhood ends and reality begins</p>
+            </div>
+          </div>
+        </DialogContent>
+      </DialogPortal>
+    </Dialog>
+  )
+}
 
-  const handlePlay = () => {
-    setPlayState(playState === 'playing' ? 'paused' : 'playing')
-  }
+function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
+  const [isHovered, setIsHovered] = useState(false)
+  const [videoThumbnail, setVideoThumbnail] = useState<string>('')
+
+  useEffect(() => {
+    const generateThumbnail = () => {
+      const video = document.createElement('video')
+      video.crossOrigin = 'anonymous'
+      video.src = movieVideo
+      video.currentTime = 5 
+      
+      video.onloadedmetadata = () => {
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d')
+        
+        canvas.width = video.videoWidth
+        canvas.height = video.videoHeight
+        
+        video.onseeked = () => {
+          if (ctx) {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+            const thumbnail = canvas.toDataURL('image/jpeg', 0.8)
+            setVideoThumbnail(thumbnail)
+          }
+        }
+        
+        video.currentTime = 5 
+      }
+      
+      video.onerror = () => {
+        console.warn('Could not load video for thumbnail generation')
+      }
+    }
+
+    generateThumbnail()
+  }, [])
 
   return (
     <motion.div
@@ -157,6 +234,22 @@ function MovieThumbnail() {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="relative aspect-video bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-3xl overflow-hidden shadow-2xl border border-gray-700/30">
+        
+        {/* Video Thumbnail */}
+        {videoThumbnail ? (
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${videoThumbnail})`,
+            }}
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-900 to-black" />
+        )}
+        
+        {/* Image overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/60" />
+        <div className="absolute inset-0 bg-black/20" />
         
         <motion.div
           animate={{
@@ -171,8 +264,8 @@ function MovieThumbnail() {
           className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent z-10"
         />
         
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/60" />
-        <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)]" />
+        
+        {/* Scanning line effect */}
         
         <div className="absolute bottom-8 left-8 right-8 z-20">
           <motion.div
@@ -198,14 +291,14 @@ function MovieThumbnail() {
             <div className="flex items-center gap-6 mt-6 text-sm text-gray-400">
               <div className="flex items-center gap-2">
                 <Clock size={16} />
-                <span>Coming Soon</span>
+                <span>07.18</span>
               </div>
               <div className="flex items-center gap-2">
                 <Award size={16} />
                 <span>Drama</span>
               </div>
               <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-              <span>2024</span>
+              <span>2025</span>
             </div>
           </motion.div>
         </div>
@@ -224,7 +317,7 @@ function MovieThumbnail() {
             transition={{ duration: 0.4, ease: "easeOut" }}
           >
             <Button
-              onClick={handlePlay}
+              onClick={onPlayClick}
               className="group relative bg-white/15 hover:bg-white/25 border-2 border-white/40 hover:border-white/60
                          rounded-full w-24 h-24 sm:w-28 sm:h-28 transition-all duration-500
                          backdrop-blur-xl shadow-2xl hover:shadow-3xl
@@ -267,9 +360,9 @@ function MovieThumbnail() {
 
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: isHovered ? 1 : 0 }}
+          animate={{ opacity: isHovered ? 0.3 : 0 }}
           transition={{ duration: 0.4 }}
-          className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/40 z-10"
+          className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/50 z-10"
         />
       </div>
       <div className="absolute -inset-1 border border-gray-600/15 rounded-3xl pointer-events-none" />
@@ -390,6 +483,16 @@ function QuoteSection() {
 }
 
 export default function MainPage() {
+  const [isVideoDialogOpen, setIsVideoDialogOpen] = useState(false)
+
+  const handlePlayClick = () => {
+    setIsVideoDialogOpen(true)
+  }
+
+  const handleCloseDialog = () => {
+    setIsVideoDialogOpen(false)
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white overflow-x-hidden">
       <StaticNoise />
@@ -399,11 +502,13 @@ export default function MainPage() {
       
       <main className="relative z-10 py-24 px-4 sm:px-6">
         <div className="container mx-auto">
-          <MovieThumbnail />
+          <MovieThumbnail onPlayClick={handlePlayClick} />
           <MovieSynopsis />
           <QuoteSection />
         </div>
       </main>
+
+      <MovieDialog isOpen={isVideoDialogOpen} onClose={handleCloseDialog} />
     </div>
   )
 }
