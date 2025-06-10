@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import {  Camera, Film, User, MapPin, Briefcase, Calendar } from "lucide-react"
+import { Camera, User, MapPin, Briefcase, Calendar } from "lucide-react"
 import Navbar from "@/utils/NavBar"
 import dheovanImg from "../assets/dheovan.jpg"
 import raphaelImg from "../assets/raphael.jpg"
@@ -11,8 +11,31 @@ import evaldoImg from "../assets/evaldo.jpg"
 import matthewImg from "../assets/matthew.jpg"
 import winsenImg from "../assets/winsen.jpg"
 
+// Type definitions
+interface TeamMember {
+  image: string;
+  name: string;
+  age: number;
+  role: string;
+  location: string;
+  specialty: string;
+  quote: string;
+}
+
+interface NoisePoint {
+  id: number;
+  x: number;
+  y: number;
+  opacity: number;
+}
+
+interface TeamMemberCardProps {
+  member: TeamMember;
+  index: number;
+}
+
 function StaticNoise() {
-  const [noise, setNoise] = useState<Array<{ id: number; x: number; y: number; opacity: number }>>([])
+  const [noise, setNoise] = useState<NoisePoint[]>([])
 
   useEffect(() => {
     const generateNoise = () => {
@@ -39,7 +62,7 @@ function StaticNoise() {
           style={{
             left: dot.x,
             top: dot.y,
-            opacity: dot.opacity*1.5,
+            opacity: dot.opacity * 1.5,
           }}
         />
       ))}
@@ -47,7 +70,7 @@ function StaticNoise() {
   )
 }
 
-function TeamMemberCard({ member, index }) {
+function TeamMemberCard({ member, index }: TeamMemberCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -114,8 +137,7 @@ function TeamMemberCard({ member, index }) {
             {/* Role Badge */}
             <div className="absolute top-4 right-4">
               <div className="bg-black/60 backdrop-blur-sm rounded-full p-2 border border-gray-600/50">
-                
-                 <User size={16} className="text-white" />
+                <User size={16} className="text-white" />
               </div>
             </div>
           </div>
@@ -162,7 +184,7 @@ function TeamMemberCard({ member, index }) {
 }
 
 function TeamCarousel() {
-  const teamMembers = [
+  const teamMembers: TeamMember[] = [
     {
       image: dheovanImg,
       name: "Dheovan Winata Alvian",
@@ -201,7 +223,7 @@ function TeamCarousel() {
     },
     {
       image: matthewImg,
-      name:"Matthew Nathanael Halim",
+      name: "Matthew Nathanael Halim",
       age: 20,
       role: "2702217402",
       location: "Jakarta, Indonesia",
@@ -210,7 +232,7 @@ function TeamCarousel() {
     },
     {
       image: winsenImg,
-      name:"Winsen Olando",
+      name: "Winsen Olando",
       age: 20,
       role: "2702280844",
       location: "Medan, Indonesia",
@@ -253,7 +275,13 @@ function TeamCarousel() {
 
 // Documentation Section
 function DocumentationSection() {
-  const documentationImages = [
+  interface DocumentationItem {
+    title: string;
+    description: string;
+    category: string;
+  }
+
+  const documentationImages: DocumentationItem[] = [
     {
       title: "Pre-Production Planning",
       description: "Storyboarding sessions and script development meetings",
