@@ -479,7 +479,7 @@ function MovieSynopsis() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-2xl" />
         
         <p className="text-lg sm:text-xl text-gray-300 leading-relaxed font-light relative z-10">
-          Empat sahabat — <span className="text-white font-medium">Dheovan</span>, <span className="text-white font-medium">Raphael</span>, <span className="text-white font-medium">Aryo</span> dan <span className="text-white font-medium">Evaldo</span> — merasa mereka sudah dewasa. Mereka sudah memasuki tahun terakhir kuliah, mulai bicara tentang karier, kebebasan finansial, dan bagaimana mereka bukan "anak-anak" lagi.
+          Empat sahabat — <span className="text-white font-medium">Dheovan</span>, <span className="text-white font-medium">Raphael</span>, <span className="text-white font-medium">Aryo</span> dan <span className="text-white font-medium">Evaldo</span> — merasa mereka sudah dewasa. Tahun-tahun kuliah dipenuhi mimpi besar, ambisi akademis, dan keyakinan bahwa hidup akan jadi lebih mudah seiring bertambahnya usia.
           <br /><br />
           Namun, dalam satu hari, mereka menghadapi kejadian yang membuat mereka sadar bahwa <span className="text-white font-medium italic">menjadi dewasa bukan hanya soal usia, tapi tentang pilihan yang sulit</span>.
         </p>
