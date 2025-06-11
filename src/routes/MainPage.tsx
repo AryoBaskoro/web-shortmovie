@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Play, Film, Award, Clock, X } from "lucide-react"
+import { Play, Film, Award, Clock, X, ExternalLink } from "lucide-react"
 import { Dialog, DialogContent, DialogOverlay, DialogPortal, DialogClose, } from "@/components/ui/dialog"
 import Navbar from "@/utils/NavBar"
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
@@ -20,6 +20,9 @@ const firebaseConfig = {
   appId: "1:817655352636:web:abb6b46c861e2b9ade6239",
   measurementId: "G-QFSECSN49F"
 };
+
+const youtubeUrl = "https://youtu.be/q1NNE5HB_r4?si=tL2FzbIcWarMETgJ";
+
 
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
@@ -228,10 +231,17 @@ function MovieDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
 function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
   const [isHovered, setIsHovered] = useState(false);
   const [videoThumbnail, setVideoThumbnail] = useState<string>('');
+  const [youtubeHovered, setYoutubeHovered] = useState(false);
 
   useEffect(() => {
     setVideoThumbnail(movThumbnail); // Set initial thumbnail from local asset
   }, []);
+
+    const handleYouTubeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    window.open(youtubeUrl, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <motion.div
@@ -260,6 +270,61 @@ function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/60" />
         <div className="absolute inset-0 bg-black/20" />
         
+         <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 1.6, duration: 0.6 }}
+          className="absolute top-6 right-6 z-40"
+        >
+          <motion.button
+            onClick={handleYouTubeClick}
+            onMouseEnter={() => setYoutubeHovered(true)}
+            onMouseLeave={() => setYoutubeHovered(false)}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="group relative bg-red-600/90 hover:bg-red-600 border-2 border-red-500/50 hover:border-red-400
+                       rounded-xl px-4 py-3 transition-all duration-300
+                       backdrop-blur-sm shadow-lg hover:shadow-red-500/25
+                       flex items-center gap-2"
+          >
+            {/* YouTube Logo SVG */}
+            <svg 
+              width="24" 
+              height="24" 
+              viewBox="0 0 24 24" 
+              fill="currentColor" 
+              className="text-white"
+            >
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+            
+            <span className="text-white font-semibold text-sm">
+              Watch on YouTube
+            </span>
+            
+            <ExternalLink 
+              size={14} 
+              className="text-white/80 group-hover:text-white transition-colors" 
+            />
+
+            {/* Tooltip */}
+            {youtubeHovered && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 
+                           bg-black/90 backdrop-blur-sm px-3 py-2 rounded-lg 
+                           border border-gray-600/50 whitespace-nowrap z-50"
+              >
+                <span className="text-white text-xs">Open in YouTube</span>
+                <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 
+                               w-2 h-2 bg-black/90 border-l border-t border-gray-600/50 
+                               rotate-45"></div>
+              </motion.div>
+            )}
+          </motion.button>
+        </motion.div>
+
         <motion.div
           animate={{
             y: ['-100%', '100vh'],
