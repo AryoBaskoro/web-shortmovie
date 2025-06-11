@@ -2,14 +2,19 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import { Camera, User, MapPin, Briefcase, Calendar } from "lucide-react"
+import { User, MapPin, Briefcase, Instagram, Calendar, ExternalLink  } from "lucide-react"
 import Navbar from "@/utils/NavBar"
 import dheovanImg from "../assets/dheovan.jpg"
 import raphaelImg from "../assets/raphael.jpg"
 import aryoImg from "../assets/aryo.jpg"
 import evaldoImg from "../assets/evaldo.jpg"
-import winsenImg from "../assets/winsen.jpg"
+import winsenImg from "../assets/winsen.png"
 import matthewImg from "../assets/matthew.jpg"
+import bts from "../assets/behind_the_scence.png"
+import planning from "../assets/planning.png"
+import postProduction from "../assets/post-production.png"
+import release from "../assets/release.png"
+import locationScouting from "../assets/loc_scouting.jpg"
 
 // Type definitions
 interface TeamMember {
@@ -19,7 +24,9 @@ interface TeamMember {
   role: string;
   location: string;
   specialty: string;
-  quote: string;
+  quote: string;    
+  instagram: string;
+  ig_link: string;
 }
 
 interface NoisePoint {
@@ -74,6 +81,7 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const handleImageError = () => {
     setImageError(true);
@@ -81,6 +89,11 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
 
   const handleImageLoad = () => {
     setImageLoaded(true);
+  };
+
+  const handleInstagramClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.open(member.ig_link, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -95,7 +108,11 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
       <Card className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-md border border-gray-700/50 overflow-hidden group hover:border-gray-600/70 transition-all duration-500">
         <CardContent className="p-0">
           {/* Profile Image Section */}
-          <div className="relative aspect-[4/5] overflow-hidden">
+          <div 
+            className="relative aspect-[4/5] overflow-hidden cursor-pointer"
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+          >
             {/* Background gradient (fallback) */}
             <div className="absolute inset-0 bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900" />
             
@@ -140,6 +157,26 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
                 <User size={16} className="text-white" />
               </div>
             </div>
+
+            {/* Instagram Link Tooltip */}
+            {showTooltip && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-600/50 flex items-center space-x-2 text-sm text-white z-20"
+              >
+                <Instagram size={16} className="text-pink-400" />
+                <span>Click to view Instagram</span>
+                <ExternalLink size={12} className="text-gray-400" />
+              </motion.div>
+            )}
+
+            {/* Clickable overlay for Instagram */}
+            <div 
+              className="absolute inset-0 cursor-pointer z-10"
+              onClick={handleInstagramClick}
+            />
           </div>
 
           {/* Info Section */}
@@ -168,6 +205,17 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
                 <Briefcase size={14} className="text-gray-500" />
                 <span className="text-sm">{member.specialty}</span>
               </div>
+
+              {/* Instagram Contact */}
+              <div className="flex items-center space-x-3 text-gray-300">
+                <Instagram size={14} className="text-pink-400" />
+                <button 
+                  onClick={handleInstagramClick}
+                  className="text-sm hover:text-pink-400 transition-colors duration-200 underline decoration-dotted underline-offset-2"
+                >
+                  {member.instagram}
+                </button>
+              </div>
             </div>
 
             {/* Quote */}
@@ -192,16 +240,20 @@ function TeamCarousel() {
       role: "2702283045",
       location: "Jakarta, Indonesia",
       specialty: "Actor",
-      quote: "Every frame tells a story, every story changes lives."
+      quote: "Every frame tells a story, every story changes lives.",
+      instagram: "@dheovan.w.a",
+      ig_link: "https://www.instagram.com/dheovan.w.a?igsh=MTFocm10aHFqMXVsNA=="
     },
     {
       image: raphaelImg,
       name: "Raphael Brian Pratama",
       age: 20,
       role: "2702275024",
-      location: "Bandung, Indonesia",
+      location: "Jakarta, Indonesia",
       specialty: "Actor",
-      quote: "Light is the language of cinema, shadows are its poetry."
+      quote: "Light is the language of cinema, shadows are its poetry.",
+      instagram: "@raphaelpratama_",
+      ig_link: "https://www.instagram.com/raphaelpratama_?igsh=eHFkaWw1bWZpdjBp"
     },
     {
       image: aryoImg,
@@ -210,16 +262,20 @@ function TeamCarousel() {
       role: "2702382221",
       location: "Jakarta, Indonesia",
       specialty: "Actor, Web Developer & Designer",
-      quote: "Great films are born from great collaboration and vision."
+      quote: "Great films are born from great collaboration and vision.",
+      instagram: "@aryobskoro_",
+      ig_link: "https://www.instagram.com/aryobskoro_?igsh=dmp6eGhzbjJiZW9r"
     },
     {
       image: evaldoImg,
       name: "Evaldo Raynardi",
       age: 20,
       role: "2702232750",
-      location: "Yogyakarta, Indonesia",
+      location: "Jakarta, Indonesia",
       specialty: "Actor",
-      quote: "Acting is not pretending, it's finding the truth in fiction."
+      quote: "Acting is not pretending, it's finding the truth in fiction.",
+      instagram: "@evaldo_raynardi",
+      ig_link: "https://www.instagram.com/evaldo_raynardi?igsh=cXp3aG1tbmtrcWYy"
     },
     {
       image: matthewImg,
@@ -228,20 +284,24 @@ function TeamCarousel() {
       role: "2702217402",
       location: "Jakarta, Indonesia",
       specialty: "Script Author, Editor",
-      quote: "Editing is where the story truly comes to life."
+      quote: "Editing is where the story truly comes to life.",
+      instagram: "@matt.nael",
+      ig_link: "https://www.instagram.com/matt.nael?igsh=MWhpcHQzcWlsYzRhdg=="
     },
     {
       image: winsenImg,
       name: "Winsen Olando",
       age: 20,
       role: "2702280844",
-      location: "Medan, Indonesia",
+      location: "Jakarta, Indonesia",
       specialty: "Script Author, Cinematographer, Editor",
-      quote: "Sound is the heartbeat of cinema."
+      quote: "Sound is the heartbeat of cinema.",
+      instagram: "@winsen_olando",
+      ig_link: "https://www.instagram.com/winsen_olando?igsh=aDBzdnd6cWF3dmJk"
     }
   ]
 
-  return (
+    return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
@@ -276,6 +336,7 @@ function TeamCarousel() {
 // Documentation Section
 function DocumentationSection() {
   interface DocumentationItem {
+    image: string;
     title: string;
     description: string;
     category: string;
@@ -283,35 +344,35 @@ function DocumentationSection() {
 
   const documentationImages: DocumentationItem[] = [
     {
+      image: planning,
       title: "Pre-Production Planning",
       description: "Storyboarding sessions and script development meetings",
       category: "Planning"
     },
     {
+      image: locationScouting,
       title: "Location Scouting",
       description: "Finding the perfect locations that match our vision",
       category: "Preparation"
     },
     {
-      title: "Equipment Setup",
-      description: "Professional camera and lighting equipment preparation",
-      category: "Technical"
-    },
-    {
+      image: bts,
       title: "Behind the Scenes",
       description: "Capturing the magic as it happens during filming",
       category: "Production"
     },
     {
-      title: "Director's Vision",
-      description: "Guiding actors and crew to bring the story to life",
-      category: "Direction"
-    },
-    {
+      image: postProduction,
       title: "Post-Production",
       description: "Editing, color grading, and sound design sessions",
       category: "Editing"
-    }
+    },
+    {
+      image: release,
+      title: "Release",
+      description: "Final touches and preparing for the premiere",
+      category: "Distribution"
+    } 
   ]
 
   return (
@@ -344,7 +405,11 @@ function DocumentationSection() {
             <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 rounded-xl overflow-hidden border border-gray-700/50 hover:border-gray-600/70 transition-all duration-500">
               {/* Placeholder for actual image */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <Camera size={48} className="text-gray-600" />
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-90"
+                />
               </div>
               
               {/* Category badge */}

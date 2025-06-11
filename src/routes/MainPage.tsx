@@ -8,9 +8,7 @@ import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from "firebase/analytics";
 import { logEvent } from 'firebase/analytics';
-
-// Example: logging a custom event
-
+import movThumbnail from '../assets/thumbnail.png'
 
 
 const firebaseConfig = {
@@ -28,7 +26,7 @@ const analytics = getAnalytics(app);
 logEvent(analytics, 'page_view');
 
 const storage = getStorage();
-const videoRef = ref(storage, 'short-movie.mp4');
+const videoRef = ref(storage, 'mulmed_fix.mp4');
 
 getDownloadURL(videoRef)
   .then((url) => {
@@ -180,7 +178,7 @@ function MovieDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
   useEffect(() => {
     const fetchVideoURL = async () => {
       try {
-        const url = await getDownloadURL(ref(storage, 'short-movie.mp4'))
+        const url = await getDownloadURL(ref(storage, 'mulmed_fix.mp4'))
         setVideoURL(url)
       } catch (error) {
         console.error('Error fetching video URL:', error)
@@ -217,7 +215,7 @@ function MovieDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             
             {/* Optional: Video info overlay */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-              <h3 className="text-white text-xl font-bold mb-2">Lebih Dari Sekedar Umur</h3>
+              <h3 className="text-white text-xl font-bold mb-2">Lebih dari Sekadar Umur</h3>
               <p className="text-gray-300 text-sm">The moment when childhood ends and reality begins</p>
             </div>
           </div>
@@ -230,54 +228,10 @@ function MovieDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
 function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
   const [isHovered, setIsHovered] = useState(false);
   const [videoThumbnail, setVideoThumbnail] = useState<string>('');
-  const [videoURL, setVideoURL] = useState<string>('');
 
   useEffect(() => {
-    const fetchVideoURL = async () => {
-      try {
-        const url = await getDownloadURL(ref(storage, 'short-movie.mp4'));
-        setVideoURL(url); // Set the video URL
-      } catch (error) {
-        console.error('Error fetching video URL:', error);
-      }
-    };
-
-    fetchVideoURL();
+    setVideoThumbnail(movThumbnail); // Set initial thumbnail from local asset
   }, []);
-
-  useEffect(() => {
-    if (videoURL) {
-      const generateThumbnail = () => {
-        const video = document.createElement('video');
-        video.crossOrigin = 'anonymous';
-        video.src = videoURL;
-        
-        // Wait for video metadata to load, then set currentTime to 5 seconds
-        video.onloadedmetadata = () => {
-          video.currentTime = 5;
-        };
-
-        // Once the video seeks to the 5-second mark, generate the thumbnail
-        video.onseeked = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const thumbnail = canvas.toDataURL('image/jpeg', 0.8);
-            setVideoThumbnail(thumbnail); // Set the thumbnail image URL
-          }
-        };
-
-        video.onerror = () => {
-          console.warn('Could not load video for thumbnail generation');
-        };
-      };
-
-      generateThumbnail();
-    }
-  }, [videoURL]);
 
   return (
     <motion.div
@@ -319,9 +273,6 @@ function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
           className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent z-10"
         />
         
-        
-        {/* Scanning line effect */}
-        
         <div className="absolute bottom-8 left-8 right-8 z-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -336,7 +287,7 @@ function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
             </div>
             
             <GlitchText className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-3 tracking-tight">
-              Lebih Dari Sekedar Umur
+              Lebih dari Sekadar Umur
             </GlitchText>
             
             <p className="text-gray-300 text-base sm:text-lg font-light leading-relaxed max-w-2xl">
@@ -350,7 +301,7 @@ function MovieThumbnail({ onPlayClick }: { onPlayClick: () => void }) {
               </div>
               <div className="flex items-center gap-2">
                 <Clock size={16} />
-                <span>07.18</span>
+                <span>07.23</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
