@@ -124,7 +124,7 @@ function FloatingParticles() {
 }
 
 export default function WelcomePage({
-  title = "Welcome to Our Cinematic Universe",
+  title = "Lebih dari Sekedar Umur",
 }: {
   title?: string
 }) {
@@ -155,17 +155,30 @@ export default function WelcomePage({
           transition={{ duration: 2 }}
           className="max-w-5xl mx-auto"
         >
+           {/* Group 1 presents text */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 1.2 }}
+            className="mb-8"
+          >
+            <p className="text-sm md:text-base text-gray-400 font-light tracking-[0.2em] uppercase">
+              Group 1 presents
+            </p>
+          </motion.div>
+
+          {/* Main title */}
           <motion.h1 
-            className="text-4xl sm:text-6xl md:text-7xl font-black mb-6 tracking-tight leading-tight"
-            initial={{ y: 50, opacity: 0 }}
+            className="text-4xl sm:text-6xl md:text-7xl lg:text-7xl font-black mb-8 tracking-tight leading-tight"
+            initial={{ y: 80, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5, duration: 1 }}
+            transition={{ delay: 0.8, duration: 1.5, ease: "easeOut" }}
           >
             {words.map((word, wordIndex) => (
-              <span key={wordIndex} className="inline-block mr-3 last:mr-0">
+              <span key={wordIndex} className="inline-block mr-4 last:mr-0 mb-2">
                 <GlitchText 
-                  delay={wordIndex * 500}
-                  className="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-400"
+                  delay={wordIndex * 600}
+                  className="text-transparent bg-clip-text bg-gradient-to-b from-white via-gray-100 to-gray-300"
                 >
                   {word}
                 </GlitchText>
@@ -173,21 +186,14 @@ export default function WelcomePage({
             ))}
           </motion.h1>
 
+          {/* Decorative line */}
           <motion.div
             initial={{ scaleX: 0, opacity: 0 }}
-            animate={{ scaleX: 1, opacity: 0.6 }}
-            transition={{ delay: 1.2, duration: 1.5 }}
-            className="w-32 h-0.5 bg-gradient-to-r from-transparent via-gray-400 to-transparent mx-auto mb-8"
+            animate={{ scaleX: 1, opacity: 0.8 }}
+            transition={{ delay: 1.8, duration: 2 }}
+            className="w-40 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mb-12"
           />
 
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5, duration: 1 }}
-            className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto font-light leading-relaxed"
-          >
-            Discover stories that transcend the ordinary. Experience cinema that moves, inspires, and transforms.
-          </motion.p>
 
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
